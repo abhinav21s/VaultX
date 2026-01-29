@@ -1,0 +1,105 @@
+.out {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #0f172a;
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: 600;
+  color: #e5e7eb;
+}
+
+/* Bigger card */
+form {
+  background-color: #1e293b;
+  padding: 48px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 480px;   /* bigger */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;          /* more spacing */
+  border: 1px solid #334155;
+}
+
+/* Each field */
+.formgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Labels */
+.formgroup label {
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+/* Inputs */
+.formgroup input {
+  padding: 14px 16px;   /* taller inputs */
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background-color: #0f172a;
+  color: #e5e7eb;
+  font-size: 16px;     /* bigger text */
+  outline: none;
+}
+
+/* Footer */
+.foot {
+  margin-top: 16px;
+  font-size: 15px;
+  color: #9ca3af;
+}
+
+/* Button */
+button {
+  margin-top: 24px;
+  padding: 14px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+.eye-icon {
+  position: absolute;
+  right: 10px;
+  top: 456px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  user-select: none;
+  right: 670px;
+}
+
+.eye-icon-lg{
+  
+  position: absolute;
+  right: 10px;
+  top: 389px;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  opacity: 0.7;
+  user-select: none;
+  right: 670px;
+
+}
+
+.eye-icon:hover {
+  opacity: 1;
+}

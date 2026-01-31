@@ -102,13 +102,32 @@ exports.userdetails=(req,res)=>{
 
 exports.connectwallet=async (req,res)=>{
    try{
-     const wallet = req.body;
+     const {address,chain,label} = req.body;
+    
+     const user = await userdetails.findById(req.user.userId)
 
-    await userdetails.updateOne(
-        {_id:req.user.userId},
-        {$set:{wallets:wallet}}
-    )
-    res.json({message:"Wallet Added Successfully"})
+     if(!user){
+        return res.status(404).json({message:"User not found"})
+     }
+
+     const existingwallet =  user.wallets.find(
+        w=>w.address.toLowerCase() === address.toLowerCase()
+     )
+     if(existingwallet){
+         existingwallet.chain=chain
+         existingwallet.label=label
+     }
+     else{
+        user.wallets.push({
+            address,
+            chain,
+            label
+        })
+       
+     }
+
+     await user.save()
+      res.json({message:"Wallet Added Successfully"})   
    }
    catch(err){
     res.json({message:"Server Error",
@@ -118,3 +137,66 @@ exports.connectwallet=async (req,res)=>{
 
 }
 
+exports.getwallet=async (req,res)=>{
+   try {
+    const user = await userdetails.findById(req.user.userId);
+    if(!user){
+       return res.status(404).json({message:"User not found"})
+    }
+    
+    res.json({wallet:user.wallets})
+}
+
+catch(err) {
+     res.json({message:"Server Error",
+        error:err.message
+     })
+}
+    
+}
+
+exports.deletewallet = async (req, res) => {
+  try {
+    const { address } = req.body
+    const userId = req.user.userId
+
+    console.log("=== DELETE WALLET DEBUG ===")
+    console.log("User ID:", userId)
+    console.log("Address to delete:", address)
+
+    if (!address) {
+      return res.status(400).json({ message: "Wallet address required" })
+    }
+
+    const user = await userdetails.findById(userId)
+    
+    if (!user) {
+      return res.status(404).json({ message: "User not found" })
+    }
+
+    console.log("Wallets before delete:", user.wallets.length)
+
+    // ✅ MANUALLY filter out the wallet (case-insensitive)
+    const normalizedAddress = address.toLowerCase()
+    user.wallets = user.wallets.filter(
+      w => w.address.toLowerCase() !== normalizedAddress
+    )
+
+    console.log("Wallets after filter:", user.wallets.length)
+
+    // ✅ Save the updated user
+    await user.save()
+
+    console.log("=== DELETE SUCCESSFUL ===")
+
+    res.json({ 
+      success: true, 
+      message: "Wallet deleted successfully",
+      wallets: user.wallets
+    })
+
+  } catch (error) {
+    console.error("❌ Delete wallet error:", error)
+    res.status(500).json({ message: "Server error", error: error.message })
+  }
+}

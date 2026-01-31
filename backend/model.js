@@ -8,9 +8,10 @@ const schema= new mongoose.Schema({
             address:String,
             chain:String,
             label:String
-        }
+        }   
     ]
 })
 
 const userdetails=  mongoose.model('userdetails',schema)
 module.exports=userdetails;
+

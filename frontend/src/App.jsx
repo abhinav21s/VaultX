@@ -1,7 +1,7 @@
 import { Dashboard } from './components/Dashboard.jsx'
 import {Login} from './components/Login.jsx'
 import {Signup} from './components/Signup.jsx'
-import './App.css'
+
 import { BrowserRouter,Route,Routes } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import "react-toastify/dist/ReactToastify.css"

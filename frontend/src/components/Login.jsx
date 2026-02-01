@@ -63,7 +63,7 @@ export function Login(){
                     />
 
                     <img
-                        src={showPass ? "/images/eye-off.png" : "/images/eye.png"}
+                        src={showPass ?  "/images/eye.png" : "/images/eye-off.png" }
                         alt="toggle"
                         className="eye-icon-lg"
                         onClick={() => setShowPass(!showPass)}

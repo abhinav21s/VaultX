@@ -19,11 +19,12 @@ export function Conwallet() {
   const [name, setName] = useState("")
   const [wallets, setWallets] = useState([])
   const [expanded, setExpanded] = useState(null)
-   const [openw, setOpen] = useState(false)
+  const [openw, setOpen] = useState(false)
   const [balance, setBalance] = useState(null)
   const [txs, setTxs] = useState([])
   const [loadingtxs, setloadingtxs] = useState(false)
   const [to, setTo] = useState("")
+  const [activeTab, setActiveTab] = useState('txs')
   const [amount, setAmount] = useState("")
   const { sendTransaction, isPending } = useSendTransaction({
     onSuccess: (hash) => {
@@ -136,9 +137,9 @@ export function Conwallet() {
     if (!address || !chain?.id) return
 
     console.log("🔗 Network changed:")
-  console.log("Chain ID:", chain?.id)
-  console.log("Chain Name:", chain?.name)
-  console.log("Native Currency:", chain?.nativeCurrency?.symbol)
+    console.log("Chain ID:", chain?.id)
+    console.log("Chain Name:", chain?.name)
+    console.log("Native Currency:", chain?.nativeCurrency?.symbol)
     setloadingtxs(true)
     loadBalance(address)
     fetchTransactions(address, chain.id)
@@ -163,7 +164,7 @@ export function Conwallet() {
   }
 
   /*----------------logout-------------------*/
-    function handleLogout(){
+  function handleLogout() {
     localStorage.removeItem("token");
     navigate("/login");
   }
@@ -172,22 +173,27 @@ export function Conwallet() {
     <>
       {/* NAVBAR */}
       <div className="navbar">
-        <img src="/images/logo1.png" className="logo" onClick={() => navigate("/")} />
-        <div className="nav-right">
-        <img 
-          src="/images/profile4.png" 
-          alt="profile" 
-          className="profile-img"
-          onClick={() => setOpen(!openw)}
+        <img
+          src="/images/logo.png"
+          className="logo"
+          onClick={() => navigate("/")}
+          style={{ display: 'block' ,height:"200px"}}
         />
+        <div className="nav-right">
+          <img
+            src="/images/profile4.png"
+            alt="profile"
+            className="profile-img"
+            onClick={() => setOpen(!openw)}
+          />
 
-        {openw && (
-          <div className="dropdown">
-            <div className="username">{name}</div>
-            <button onClick={handleLogout}>Logout</button>
-          </div>
-        )}
-      </div>
+          {openw && (
+            <div className="dropdown">
+              <div className="username">{name}</div>
+              <button onClick={handleLogout}>Logout</button>
+            </div>
+          )}
+        </div>
       </div>
 
 
@@ -212,7 +218,7 @@ export function Conwallet() {
                 }
               }}
             >
-              <img src="/images/bin1.png" className="delete-wallet-btn"
+              <img src="/images/bin5.png" className="delete-wallet-btn"
                 onClick={(e) => deleteWallet(w.address, e)} alt="" />
 
               <h3>{w.label}</h3>
@@ -224,63 +230,77 @@ export function Conwallet() {
                   {active ? (
                     <>
                       <h4>Balance</h4>
-                      <p>{balance ?? "Loading..."}</p>
+                      <p>{balance ?? "Loading..."} {chain?.nativeCurrency?.symbol || "ETH"}</p>
 
-                      <h4>Transactions</h4>
-                      {loadingtxs && <p>Loading transactions...</p>}
-
-                      {!loadingtxs && txs.length === 0 && (
-                        <p>No recent transactions</p>
-                      )}
-
-                      {txs.map(tx => (
-                        <div key={tx.hash} className="tx-row">
-                          <span>{tx.hash.slice(0, 10)}...</span>
-                          <span>{formatEther(BigInt(tx.value))} ETH</span>
-                          <a
-                            href={`${chain.blockExplorers.default.url}/tx/${tx.hash}`}
-                            target="_blank"
-                            rel="noreferrer"
-                          >View</a>
-
-                        </div>
-                      ))}
-                      <div>
-                        <a href={`${chain?.blockExplorers?.default?.url}/address/${address}`}
-                          target="_blank"
-                          rel="noreferrer">
-                          View all Transactions on {chain?.name}
-                        </a>
+                      {/* Tab System */}
+                      <div className="tab-container">
+                        <button
+                          className={`tab-btn ${activeTab === 'txs' ? 'active' : ''}`}
+                          onClick={(e) => { e.stopPropagation(); setActiveTab('txs') }}
+                        >
+                          Transactions
+                        </button>
+                        <button
+                          className={`tab-btn ${activeTab === 'send' ? 'active' : ''}`}
+                          onClick={(e) => { e.stopPropagation(); setActiveTab('send') }}
+                        >
+                          Send
+                        </button>
                       </div>
 
+                      {/* Tab Content */}
+                      <div className="tab-content">
+                        {activeTab === 'txs' && (
+                          <>
+                            {loadingtxs && <p>Loading transactions...</p>}
+                            {!loadingtxs && txs.length === 0 && <p>No recent transactions</p>}
+                            {txs.map(tx => (
+                              <div key={tx.hash} className="tx-row">
+                                <span>{tx.hash.slice(0, 10)}...</span>
+                                <span>{formatEther(BigInt(tx.value))} {chain?.nativeCurrency?.symbol || "ETH"}</span>
+                                <a href={`${chain.blockExplorers.default.url}/tx/${tx.hash}`} target="_blank" rel="noreferrer">
+                                  View
+                                </a>
+                              </div>
+                            ))}
+                            <div>
+                              <a className="view-all-link" href={`${chain?.blockExplorers?.default?.url}/address/${address}`} target="_blank" rel="noreferrer">
+                                View all on {chain?.name}
+                              </a>
+                            </div>
+                          </>
+                        )}
 
-                      <h4>Send</h4>
-                      <input placeholder="To address"
-                        value={to}
-                        onChange={(e) => { setTo(e.target.value) }} />
+                        {activeTab === 'send' && (
+                          <>
+                            <input
+                              placeholder="Recipient address"
+                              value={to}
+                              onChange={(e) => setTo(e.target.value)}
+                            />
+                            <input
+                              placeholder={`Amount in ${chain?.nativeCurrency?.symbol || "ETH"}`}
+                              value={amount}
+                              onChange={(e) => setAmount(e.target.value)}
+                            />
+                            <button className="btn-send" onClick={handlesend} disabled={isPending}>
+                              {isPending ? "Sending..." : `Send ${chain?.nativeCurrency?.symbol || "ETH"}`}
+                            </button>
+                          </>
+                        )}
+                      </div>
 
-                      <input placeholder="Amount"
-                        value={amount}
-                        onChange={(e) => { setAmount(e.target.value) }} />
-
-                      <button onClick={handlesend} disabled={isPending}>
-                        {isPending ? "Sending..." : "Send"}
-                      </button>
-
-                      <button onClick={(e) => {
-                        e.stopPropagation()
+                      <button className="btn-disconnect" onClick={(e) => { e.stopPropagation() 
                         disconnect()
-                      }}>Disconnect</button>
-
-                      <button onClick={(e) => {
-                        e.stopPropagation()
-                        open({ view: 'Networks' })  // ✅ Opens only network switcher
-                      }}>
+                         }}>
+                        Disconnect
+                      </button>
+                      <button className="btn-switch" onClick={(e) => { e.stopPropagation(); open({ view: 'Networks' }) }}>
                         Switch Network
                       </button>
                     </>
                   ) : (
-                    <button onClick={() => open()}>Reconnect</button>
+                    <button className="btn-reconnect" onClick={() => open()}>Reconnect</button>
                   )}
                 </div>
               )}
@@ -289,7 +309,7 @@ export function Conwallet() {
         })}
       </div>
 
-      <div><button onClick={() => open()} style={{ marginTop: "80px" }}>Connect Wallet</button></div>
+     <button className="btn-connect-bottom" onClick={() => open()}>Connect Wallet</button>
     </>
   )
 }

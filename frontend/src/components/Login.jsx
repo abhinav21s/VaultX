@@ -11,13 +11,14 @@ export function Login(){
      const [showPass, setShowPass] = useState(false);
      const navigate=useNavigate();
 
+     const backend_url=import.meta.env.VITE_BACKEND_ROUTE
    async function handleform(e){
    try{
 
     e.preventDefault();
    //get and send data and store in db and manage and store jwt for login
 
-    const res = await fetch("http://localhost:3000/cypher/login",{
+    const res = await fetch(`${backend_url}/cypher/login`,{
         method:"POST",
         headers:{
             "Content-Type":"application/json"

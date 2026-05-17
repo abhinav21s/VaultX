@@ -7,6 +7,7 @@ import { useAppKitNetwork } from "@reown/appkit/react"
 import { useAppKit } from "@reown/appkit/react"
 import { formatEther, parseEther } from "viem"
 
+const backend_url=import.meta.env.VITE_BACKEND_ROUTE
 
 export function Conwallet() {
   const navigate = useNavigate()
@@ -26,6 +27,7 @@ export function Conwallet() {
   const [to, setTo] = useState("")
   const [activeTab, setActiveTab] = useState('txs')
   const [amount, setAmount] = useState("")
+   
   const { sendTransaction, isPending } = useSendTransaction({
     onSuccess: (hash) => {
       toast.success("Transaction sent")
@@ -39,20 +41,21 @@ export function Conwallet() {
     const token = localStorage.getItem("token")
     if (!token) return
 
-    fetch("http://localhost:3000/cypher/userdetails", {
+    fetch(`${backend_url}/cypher/userdetails`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())
       .then(d => setName(d.username))
   }, [])
 
+ 
   /* ---------- SAVE WALLET ---------- */
   useEffect(() => {
     if (!isConnected || !address) return
 
     const token = localStorage.getItem("token")
 
-    fetch("http://localhost:3000/cypher/connectwallet", {
+    fetch(`${backend_url}/cypher/connectwallet`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -72,7 +75,7 @@ export function Conwallet() {
     const token = localStorage.getItem("token")
 
     try {
-      const res = await fetch("http://localhost:3000/cypher/deletewallet", {
+      const res = await fetch(`${backend_url}/cypher/deletewallet`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,8 +105,9 @@ export function Conwallet() {
 
   /* ---------- FETCH WALLETS ---------- */
   function fetchWallets() {
+    
     const token = localStorage.getItem("token")
-    fetch("http://localhost:3000/cypher/getwallet", {
+    fetch(`${backend_url}/cypher/getwallet`, {
       headers: { Authorization: `Bearer ${token}` }
     })
       .then(res => res.json())

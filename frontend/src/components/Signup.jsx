@@ -8,12 +8,12 @@ export function Signup() {
     const [email, setemail] = useState("")
     const [password, setpass] = useState("")
     const [showPass, setShowPass] = useState(false);
-
+    const backend_url=import.meta.env.VITE_BACKEND_ROUTE
     async function handleform(e) {
         try {
             e.preventDefault();
 
-            const res = await fetch("http://localhost:3000/cypher/register", {//res recieves an obj which has a key ok which is used down 
+            const res = await fetch(`${backend_url}/cypher/register`, {//res recieves an obj which has a key ok which is used down 
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

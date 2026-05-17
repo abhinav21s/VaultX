@@ -12,6 +12,10 @@ app.get('/health', (req, res) => {
     message: "Server is running"
   })
 })
+
+app.get('/',(req,res)=>{
+    res.send("Server Running")
+})
 app.use("/cypher",route)
 connectdb();
 

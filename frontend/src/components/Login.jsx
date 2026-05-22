@@ -43,41 +43,56 @@ export function Login(){
     }
 
 
-    return(
-        <div className="out">
-            <h1>Login</h1>
-            <form onSubmit={handleform} method="post">
-                
-                <div className="formgroup">
-                    <label htmlFor="">Email</label>
-                    <input type="email" placeholder="Email" required name="email" autoComplete="email" value={email} onChange={(e)=>setemail(e.target.value)}/>
-                </div>
-                <div className="formgroup">
-                     <input
-                        type={showPass ? "text" : "password"}
-                        name="password"
-                        placeholder="password"
-                        required
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setpass(e.target.value)}
-                    />
+    return (
+        <div className="auth-container">
+            <div className="auth-card">
+                <h1>Welcome Back</h1>
+                <p className="auth-subtitle">Login to access your dashboard</p>
+                <form onSubmit={handleform} method="post">
+                    <div className="form-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            name="email"
+                            autoComplete="email"
+                            value={email}
+                            onChange={(e) => setemail(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Password</label>
+                        <div className="password-input-wrapper">
+                            <input
+                                type={showPass ? "text" : "password"}
+                                name="password"
+                                placeholder="••••••••"
+                                required
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={(e) => setpass(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="toggle-password"
+                                onClick={() => setShowPass(!showPass)}
+                                aria-label={showPass ? "Hide password" : "Show password"}
+                            >
+                                <img
+                                    src={showPass ? "/images/eye.png" : "/images/eye-off.png"}
+                                    alt=""
+                                />
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" className="auth-button">Login</button>
+                </form>
 
-                    <img
-                        src={showPass ?  "/images/eye.png" : "/images/eye-off.png" }
-                        alt="toggle"
-                        className="eye-icon-lg"
-                        onClick={() => setShowPass(!showPass)}
-                    />
+                <div className="auth-footer">
+                    Don't have an account? <Link to='/signup'>Sign Up</Link>
                 </div>
-                <button type="submit">Login</button>
-            </form>
-
-            <div className="foot">
-                Dont have an account ? <Link to='/signup'style={{textDecoration:"none"}}>SignUp</Link>
             </div>
-            
-
         </div>
     )
 }

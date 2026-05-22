@@ -38,44 +38,67 @@ export function Signup() {
 
     }
     return (
-        <div className="out">
-            <h1>SignUp</h1>
-            <form onSubmit={handleform} method="post">
-                <div className="formgroup">
-                    <label htmlFor="">Username</label>
-                    <input type="text" placeholder="username" required name="username" value={username} autoComplete="username" onChange={(e) => setuser(e.target.value)} />
-                </div>
-                <div className="formgroup">
-                    <label htmlFor="">Email</label>
-                    <input type="email" placeholder="Email" required name="email" value={email} autoComplete="email" onChange={(e) => setemail(e.target.value)} />
-                </div>
-                <div className="formgroup">
-                    <label htmlFor="">Password</label>
-                    <input
-                        type={showPass ? "text" : "password"}
-                        name="password"
-                        placeholder="password"
-                        required
-                        autoComplete="current-password"
-                        value={password}
-                        onChange={(e) => setpass(e.target.value)}
-                    />
+        <div className="auth-container">
+            <div className="auth-card">
+                <h1>Create Account</h1>
+                <p className="auth-subtitle">Join VaultX to manage your crypto assets</p>
+                <form onSubmit={handleform} method="post">
+                    <div className="form-group">
+                        <label>Username</label>
+                        <input
+                            type="text"
+                            placeholder="username"
+                            required
+                            name="username"
+                            value={username}
+                            autoComplete="username"
+                            onChange={(e) => setuser(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Email Address</label>
+                        <input
+                            type="email"
+                            placeholder="name@example.com"
+                            required
+                            name="email"
+                            value={email}
+                            autoComplete="email"
+                            onChange={(e) => setemail(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Password</label>
+                        <div className="password-input-wrapper">
+                            <input
+                                type={showPass ? "text" : "password"}
+                                name="password"
+                                placeholder="••••••••"
+                                required
+                                autoComplete="current-password"
+                                value={password}
+                                onChange={(e) => setpass(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="toggle-password"
+                                onClick={() => setShowPass(!showPass)}
+                                aria-label={showPass ? "Hide password" : "Show password"}
+                            >
+                                <img
+                                    src={showPass ? "/images/eye.png" : "/images/eye-off.png"}
+                                    alt=""
+                                />
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" className="auth-button">Create Account</button>
+                </form>
 
-                    <img
-                        src={showPass ?  "/images/eye.png" : "/images/eye-off.png"}
-                        alt="toggle"
-                        className="eye-icon"
-                        onClick={() => setShowPass(!showPass)}
-                    />
+                <div className="auth-footer">
+                    Already have an account? <Link to='/login'>Login</Link>
                 </div>
-                <button type="submit">Create Account</button>
-            </form>
-
-            <div className="foot">
-                Already have an account? <Link to='/login' style={{ textDecoration: "none" }}>Login</Link>
             </div>
-
-
         </div>
     )
 }

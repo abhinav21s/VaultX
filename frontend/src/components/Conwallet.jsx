@@ -174,147 +174,181 @@ export function Conwallet() {
   }
   /* ---------- UI ---------- */
   return (
-    <>
+    <div className="conwallet-container">
       {/* NAVBAR */}
-      <div className="navbar">
-        <img
-          src="/images/logo.png"
-          className="logo"
-          onClick={() => navigate("/")}
-          style={{ display: 'block' ,height:"200px"}}
-        />
-        <div className="nav-right">
-          <img
-            src="/images/profile4.png"
-            alt="profile"
-            className="profile-img"
-            onClick={() => setOpen(!openw)}
-          />
-
-          {openw && (
-            <div className="dropdown">
-              <div className="username">{name}</div>
-              <button onClick={handleLogout}>Logout</button>
+      <nav className="navbar">
+        <div className="navbar-content">
+          <div className="logo-container" onClick={() => navigate("/")}>
+            <img src="/images/logo.png" alt="VaultX Logo" className="logo-img" />
+            <span className="logo-text">VaultX</span>
+          </div>
+          <div className="nav-right">
+            <div className="profile-container" onClick={() => setOpen(!openw)}>
+              <span className="username-label">{name}</span>
+              <img
+                src="/images/profile2.png"
+                alt="profile"
+                className="profile-img"
+              />
             </div>
-          )}
-        </div>
-      </div>
 
-
-
-
-      {/* WALLETS */}
-      <div className="wallet-column">
-        {wallets && wallets.map(w => {
-          const active =
-            isConnected &&
-            address?.toLowerCase() === w.address.toLowerCase()
-
-          return (
-            <div
-              key={w.address}
-              className={`wallet-card ${active ? "active" : ""}`}
-              onClick={() => {
-                setExpanded(w.address)
-                if (active) {
-                  loadBalance(address)
-                  //loadTxs(address)
-                }
-              }}
-            >
-              <img src="/images/bin5.png" className="delete-wallet-btn"
-                onClick={(e) => deleteWallet(w.address, e)} alt="" />
-
-              <h3>{w.label}</h3>
-              <p>{w.address.slice(0, 6)}...{w.address.slice(-4)}</p>
-              <p>{active ? chain?.name : w.chain}</p>
-
-              {expanded === w.address && (
-                <div className="wallet-details">
-                  {active ? (
-                    <>
-                      <h4>Balance</h4>
-                      <p>{balance ?? "Loading..."} {chain?.nativeCurrency?.symbol || "ETH"}</p>
-
-                      {/* Tab System */}
-                      <div className="tab-container">
-                        <button
-                          className={`tab-btn ${activeTab === 'txs' ? 'active' : ''}`}
-                          onClick={(e) => { e.stopPropagation(); setActiveTab('txs') }}
-                        >
-                          Transactions
-                        </button>
-                        <button
-                          className={`tab-btn ${activeTab === 'send' ? 'active' : ''}`}
-                          onClick={(e) => { e.stopPropagation(); setActiveTab('send') }}
-                        >
-                          Send
-                        </button>
-                      </div>
-
-                      {/* Tab Content */}
-                      <div className="tab-content">
-                        {activeTab === 'txs' && (
-                          <>
-                            {loadingtxs && <p>Loading transactions...</p>}
-                            {!loadingtxs && txs.length === 0 && <p>No recent transactions</p>}
-                            {txs.map(tx => (
-                              <div key={tx.hash} className="tx-row">
-                                <span>{tx.hash.slice(0, 10)}...</span>
-                                <span>{formatEther(BigInt(tx.value))} {chain?.nativeCurrency?.symbol || "ETH"}</span>
-                                <a href={`${chain.blockExplorers.default.url}/tx/${tx.hash}`} target="_blank" rel="noreferrer">
-                                  View
-                                </a>
-                              </div>
-                            ))}
-                            <div>
-                              <a className="view-all-link" href={`${chain?.blockExplorers?.default?.url}/address/${address}`} target="_blank" rel="noreferrer">
-                                View all on {chain?.name}
-                              </a>
-                            </div>
-                          </>
-                        )}
-
-                        {activeTab === 'send' && (
-                          <>
-                            <input
-                              placeholder="Recipient address"
-                              value={to}
-                              onChange={(e) => setTo(e.target.value)}
-                            />
-                            <input
-                              placeholder={`Amount in ${chain?.nativeCurrency?.symbol || "ETH"}`}
-                              value={amount}
-                              onChange={(e) => setAmount(e.target.value)}
-                            />
-                            <button className="btn-send" onClick={handlesend} disabled={isPending}>
-                              {isPending ? "Sending..." : `Send ${chain?.nativeCurrency?.symbol || "ETH"}`}
-                            </button>
-                          </>
-                        )}
-                      </div>
-
-                      <button className="btn-disconnect" onClick={(e) => { e.stopPropagation() 
-                        disconnect()
-                         }}>
-                        Disconnect
-                      </button>
-                      <button className="btn-switch" onClick={(e) => { e.stopPropagation(); open({ view: 'Networks' }) }}>
-                        Switch Network
-                      </button>
-                    </>
-                  ) : (
-                    <button className="btn-reconnect" onClick={() => open()}>Reconnect</button>
-                  )}
+            {openw && (
+              <div className="dropdown">
+                <div className="dropdown-header">
+                  <p className="user-email">{name}</p>
                 </div>
-              )}
-            </div>
-          )
-        })}
-      </div>
+                <button className="logout-btn" onClick={handleLogout}>Logout</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
 
-     <button className="btn-connect-bottom" onClick={() => open()}>Connect Wallet</button>
-    </>
+      <main className="dashboard-content">
+        <div className="wallet-header">
+          <h2>Your Wallets</h2>
+          <button className="add-wallet-btn" onClick={() => open()}>
+            <span className="plus-icon">+</span> Connect New
+          </button>
+        </div>
+
+        <div className="wallet-grid">
+          {wallets && wallets.map(w => {
+            const active =
+              isConnected &&
+              address?.toLowerCase() === w.address.toLowerCase()
+
+            return (
+              <div
+                key={w.address}
+                className={`wallet-card ${active ? "active" : ""}`}
+                onClick={() => {
+                  setExpanded(w.address === expanded ? null : w.address)
+                  if (active) {
+                    loadBalance(address)
+                  }
+                }}
+              >
+                <div className="wallet-card-header">
+                  <div className="wallet-info">
+                    <h3>{w.label}</h3>
+                    <p className="wallet-address">{w.address.slice(0, 6)}...{w.address.slice(-4)}</p>
+                  </div>
+                  <button className="delete-btn" onClick={(e) => deleteWallet(w.address, e)}>
+                    <img src="/images/bin5.png" alt="Delete" />
+                  </button>
+                </div>
+                
+                <div className="wallet-footer">
+                  <span className={`status-indicator ${active ? 'online' : 'offline'}`}></span>
+                  <p className="wallet-chain">{active ? chain?.name : w.chain}</p>
+                </div>
+
+                {expanded === w.address && (
+                  <div className="wallet-details" onClick={(e) => e.stopPropagation()}>
+                    {active ? (
+                      <div className="active-details">
+                        <div className="balance-section">
+                          <span className="balance-label">Current Balance</span>
+                          <p className="balance-value">
+                            {balance ?? "0.00"} <span>{chain?.nativeCurrency?.symbol || "ETH"}</span>
+                          </p>
+                        </div>
+
+                        {/* Tab System */}
+                        <div className="tab-navigation">
+                          <button
+                            className={`tab-link ${activeTab === 'txs' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('txs')}
+                          >
+                            Transactions
+                          </button>
+                          <button
+                            className={`tab-link ${activeTab === 'send' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('send')}
+                          >
+                            Send Assets
+                          </button>
+                        </div>
+
+                        {/* Tab Content */}
+                        <div className="tab-panel">
+                          {activeTab === 'txs' && (
+                            <div className="transactions-list">
+                              {loadingtxs ? (
+                                <p className="loading-text">Fetching transactions...</p>
+                              ) : txs.length === 0 ? (
+                                <p className="empty-text">No recent transactions found.</p>
+                              ) : (
+                                <>
+                                  {txs.map(tx => (
+                                    <div key={tx.hash} className="transaction-item">
+                                      <div className="tx-info">
+                                        <span className="tx-hash">{tx.hash.slice(0, 10)}...</span>
+                                        <span className="tx-amount">{parseFloat(formatEther(BigInt(tx.value))).toFixed(4)} {chain?.nativeCurrency?.symbol || "ETH"}</span>
+                                      </div>
+                                      <a href={`${chain.blockExplorers.default.url}/tx/${tx.hash}`} target="_blank" rel="noreferrer" className="tx-link">
+                                        View
+                                      </a>
+                                    </div>
+                                  ))}
+                                  <a className="explorer-link" href={`${chain?.blockExplorers?.default?.url}/address/${address}`} target="_blank" rel="noreferrer">
+                                    View on Explorer &rarr;
+                                  </a>
+                                </>
+                              )}
+                            </div>
+                          )}
+
+                          {activeTab === 'send' && (
+                            <div className="send-form">
+                              <div className="input-field">
+                                <label>Recipient Address</label>
+                                <input
+                                  placeholder="0x..."
+                                  value={to}
+                                  onChange={(e) => setTo(e.target.value)}
+                                />
+                              </div>
+                              <div className="input-field">
+                                <label>Amount ({chain?.nativeCurrency?.symbol || "ETH"})</label>
+                                <input
+                                  type="number"
+                                  placeholder="0.00"
+                                  value={amount}
+                                  onChange={(e) => setAmount(e.target.value)}
+                                />
+                              </div>
+                              <button className="submit-send-btn" onClick={handlesend} disabled={isPending}>
+                                {isPending ? "Processing..." : "Confirm Transaction"}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="action-footer">
+                          <button className="switch-net-btn" onClick={() => open({ view: 'Networks' })}>
+                            Switch Network
+                          </button>
+                          <button className="disconnect-btn" onClick={() => disconnect()}>
+                            Disconnect
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="inactive-details">
+                        <p>This wallet is disconnected</p>
+                        <button className="reconnect-btn" onClick={() => open()}>Connect Now</button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </main>
+    </div>
   )
 }
 
